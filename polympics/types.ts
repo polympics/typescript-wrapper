@@ -31,21 +31,11 @@ export class Team {
         this.createdAt = new Date(created_at * 1000);
         this.memberCount = member_count;
     }
-
-    /** Convert the team to data suitable to passed to the API. */
-    toRaw(): RawTeam {
-        return {
-            id: this.id,
-            name: this.name,
-            created_at: this.createdAt.getTime() / 1000,
-            member_count: this.memberCount
-        }
-    }
 }
 
 /** User account object as returned by the API. */
 export interface RawAccount {
-    discord_id: bigint,
+    discord_id: string,
     display_name: string,
     discriminator: number,
     created_at: number,
@@ -56,7 +46,7 @@ export interface RawAccount {
 
 /** User account object as used by the wrapper. */
 export class Account {
-    discordId: bigint;
+    discordId: string;
     displayName: string;
     discriminator: number;
     createdAt: Date;
@@ -76,26 +66,19 @@ export class Account {
         this.avatarUrl = avatar_url;
         this.team = new Team(team);
     }
-
-    /** Convert the account to data suitable to passed to the API. */
-    toRaw(): Record<string, any> {
-        return {
-            discord_id: this.discordId,
-            display_name: this.displayName,
-            discriminator: this.discriminator,
-            created_at: this.createdAt.getTime() / 1000,
-            avatar_url: this.avatarUrl,
-            team: this.team.id
-        }
-    }
 }
 
-/** One page of a paginated response from the API. */
-export interface RawPaginatedResponse<Type> {
+/** Metadata for a page of a paginated response from the API. */
+export interface RawPaginatedResponseMetadata {
     page: number,
     per_page: number,
     pages: number,
     results: number,
+}
+
+/** One page of a paginated response from the API. */
+export interface RawPaginatedResponse<
+        Type> extends RawPaginatedResponseMetadata {
     data: Type[]
 }
 
@@ -108,7 +91,10 @@ export class PaginatedResponse<Type> {
     data: Type[];
 
     constructor(
-        { page, per_page, pages, results, data }: RawPaginatedResponse<Type>
+        {
+            page, per_page, pages, results
+        }: RawPaginatedResponseMetadata,
+        data: Type[]
     ) {
         this.page = page;
         this.perPage = per_page;
@@ -172,18 +158,22 @@ export class AppCredentials extends App implements Credentials {
     }
 }
 
-/** Any response from the API with status code >= 400. */
+/** Any response from the API with an unexpected status code. */
 export class PolympicsError extends Error {
     constructor(public code: number) {
         super(`Polympics error: ${code}.`);
+        this.code = code;
     }
 }
 
 /** An error on the server side. */
 export class ServerError extends PolympicsError {};
 
+/** An unexpected 204 response (no content). */
+export class EmptyResponse extends PolympicsError {};
+
 /** Details about a parameter error returned from the server. */
-interface ParameterError {
+export interface ParameterError {
     loc: string[],
     msg: string,
     type: string
@@ -193,12 +183,13 @@ interface ParameterError {
 export class DataError extends PolympicsError {
     constructor(code: number, public issues: ParameterError[]) {
         super(code);
-        let lines: string[] = [`${code}: ${issues.length} parameter errors:\n`];
+        let lines: string[] = [];
         for (const issue of issues) {
             const path = issue.loc.join(' -> ');
-            lines.push(`  ${path}: ${issue.msg} (${issue.type})`);
+            lines.push(`${path}: ${issue.msg} (${issue.type})`);
         }
-        this.message = lines.join('\n');
+        this.message = `${code}: ${issues.length} parameter errors: `
+            + lines.join('; ');
     }
 };
 

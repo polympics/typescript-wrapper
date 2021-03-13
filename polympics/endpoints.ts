@@ -10,8 +10,12 @@ import {
 } from './types';
 import { Paginator } from './paginator';
 
+export interface NewTeam {
+    name: string;
+}
+
 export interface NewAccount {
-    discordId: bigint;
+    discordId: string;
     displayName: string;
     discriminator: number;
     permissions: number;
@@ -19,11 +23,32 @@ export interface NewAccount {
     team: Team;
 }
 
+export interface TeamUpdate {
+    name: string;
+}
+
+export interface AccountUpdate {
+    displayName?: string;
+    discriminator?: number;
+    grantPermissions?: number;
+    revokePermissions?: number;
+    avatarUrl?: string;
+    team?: Team;
+}
+
+export interface SearchOptions {
+    search?: string | null;
+}
+
+export interface AccountSearchOptions extends SearchOptions {
+    team?: Team | null;
+}
+
 /** Wrappers for endpoints that don't need authentication. */
 export class UnauthenticatedClient extends BaseClient {
     /** Get an account by Discord ID. */
-    async getAccount(discordId: bigint): Promise<Account> {
-        const data = await this.makeRequest<RawAccount>(
+    async getAccount(discordId: string): Promise<Account> {
+        const data = await this.request<RawAccount>(
             'GET', `/account/${discordId}`
         );
         return new Account(data);
@@ -31,47 +56,57 @@ export class UnauthenticatedClient extends BaseClient {
 
     /** Get a team by ID. */
     async getTeam(id: number): Promise<Team> {
-        const data = await this.makeRequest<RawTeam>('GET', `/team/${id}`);
+        const data = await this.request<RawTeam>('GET', `/team/${id}`);
         return new Team(data);
     }
 
     /** Get a paginated list of accounts matching a query. */
-    listAccounts({ search = null, team = null} = {}): Paginator<Account> {
+    listAccounts(
+            { search = null, team = null}: AccountSearchOptions = {}
+    ): Paginator<Account> {
         const thisClient = this;
         async function getPage(
                 params: Record<string, any>
         ): Promise<PaginatedResponse<Account>> {
             if (search) {
-                params.search = search;
+                params.q = search;
             }
             if (team) {
                 params.team = team.id;
             }
-            const data = await thisClient.makeRequest<
-                    RawPaginatedResponse<Account>
+            const data = await thisClient.request<
+                    RawPaginatedResponse<RawAccount>
             >(
                 'GET', '/accounts/search', params
             );
-            return new PaginatedResponse<Account>(data);
+            const parsedData = [];
+            for (const raw of data.data) {
+                parsedData.push(new Account(raw));
+            }
+            return new PaginatedResponse<Account>(data, parsedData);
         }
         return new Paginator<Account>(getPage);
     }
 
     /** Get a paginated list of teams matching a query. */
-    listTeams({ search = null }): Paginator<Team> {
+    listTeams({ search = null }: SearchOptions = {}): Paginator<Team> {
         const thisClient = this;
         async function getPage(
                 params: Record<string, any>
         ): Promise<PaginatedResponse<Team>> {
             if (search) {
-                params.search = search;
+                params.q = search;
             }
-            const data = await thisClient.makeRequest<
-                    RawPaginatedResponse<Team>
+            const data = await thisClient.request<
+                    RawPaginatedResponse<RawTeam>
             >(
                 'GET', '/teams/search', params
             );
-            return new PaginatedResponse<Team>(data);
+            const parsedData = [];
+            for (const raw of data.data) {
+                parsedData.push(new Team(raw));
+            }
+            return new PaginatedResponse<Team>(data, parsedData);
         }
         return new Paginator<Team>(getPage);
     }
@@ -85,61 +120,76 @@ class AuthenticatedClient extends UnauthenticatedClient {
      * attribute will be ignored if set.
      */
     async createAccount(account: NewAccount): Promise<Account> {
-        const data = await this.makeRequest<RawAccount>(
-            'POST', '/accounts/new', {
+        const data = await this.request<RawAccount>(
+            'POST', '/accounts/signup', {
                 discord_id: account.discordId,
                 display_name: account.displayName,
                 discriminator: account.discriminator,
                 avatar_url: account.avatarUrl,
-                team: account.team.id
+                team: account.team.id,
+                permissions: account.permissions
             }
         );
         return new Account(data);
     }
 
-    /** Update an edited account.
-     *
-     * Example:
-     * ```ts
-     * account = await client.getAccount(1241481984);
-     * account.displayName = 'New name';
-     * await client.updateAccount(account);
-     * ```
-     *
-     * Note that modifications to `createdAt` will be ignored, and
-     * modifications to `discordId` will not act as expected.
-     */
-    async updateAccount(account: Account) {
-        await this.makeRequest<null>(
-            'PATCH', `/account/${account.discordId}`, account.toRaw()
+    /** Edit an account. */
+    async updateAccount(
+            account: Account, options: AccountUpdate
+    ): Promise<Account> {
+        const data: Record<string, any> = {};
+        if (options.avatarUrl) {
+            data.avatar_url = options.avatarUrl;
+        }
+        if (options.discriminator) {
+            data.discriminator = options.discriminator;
+        }
+        if (options.displayName) {
+            data.display_name = options.displayName;
+        }
+        if (options.grantPermissions) {
+            data.grant_permissions = options.grantPermissions;
+        }
+        if (options.revokePermissions) {
+            data.revoke_permissions = options.revokePermissions;
+        }
+        if (options.team) {
+            data.team = options.team.id;
+        }
+        const newData = await this.request<RawAccount>(
+            'PATCH', `/account/${account.discordId}`, data
         );
+        return new Account(newData);
     }
 
     /** Delete an account. */
     async deleteAccount(account: Account) {
-        await this.makeRequest<null>(
-            'DELETE', `/account/${account.discordId}`
+        await this.request<null>(
+            'DELETE', `/account/${account.discordId}`, {},
+            { allowNullResponse: true }
         );
     }
 
     /** Create a new team. */
     async createTeam(name: string): Promise<Team> {
-        return await this.makeRequest<Team>('POST', '/teams/new', {
+        return await this.request<Team>('POST', '/teams/new', {
             name: name
         });
     }
 
     /** Edit a team's name. */
-    async updateTeam(team: Team, newName: string) {
-        await this.makeRequest<null>(
-            'PATCH', `/team/${team.id}`, { name: newName }
+    async updateTeam(team: Team, options: TeamUpdate): Promise<Team> {
+        const data = await this.request<RawTeam>(
+            'PATCH', `/team/${team.id}`, options
         );
-        team.name = newName;
+        return new Team(data);
     }
 
     /** Delete a team. */
     async deleteTeam(team: Team) {
-        await this.makeRequest<null>('DELETE', `/team/${team.id}`);
+        await this.request<null>(
+            'DELETE', `/team/${team.id}`, {}, { allowNullResponse: true }
+        );
     }
 }
 
@@ -147,7 +197,7 @@ class AuthenticatedClient extends UnauthenticatedClient {
 export class AppClient extends AuthenticatedClient {
     /** Create a user authentication session. */
     async createSession(account: Account): Promise<Session> {
-        const data = await this.makeRequest<RawSession>(
+        const data = await this.request<RawSession>(
             'POST', `/account/${account.discordId}/session`
         );
         return new Session(data);
@@ -155,7 +205,7 @@ export class AppClient extends AuthenticatedClient {
 
     /** Reset the authenticated app's token. */
     async resetToken(): Promise<AppCredentials> {
-        const data = await this.makeRequest<RawAppCredentials>(
+        const data = await this.request<RawAppCredentials>(
             'POST', '/app/reset_token'
         );
         const app = new AppCredentials(data);
@@ -165,7 +215,7 @@ export class AppClient extends AuthenticatedClient {
 
     /** Get metadata on the authenticated app. */
     async getApp(): Promise<App> {
-        const data =  await this.makeRequest<RawApp>('GET', '/app');
+        const data =  await this.request<RawApp>('GET', '/app');
         return new App(data);
     }
 }
@@ -174,7 +224,7 @@ export class AppClient extends AuthenticatedClient {
 export class UserClient extends AuthenticatedClient {
     /** Get the account for the authenticated user. */
     async getSelf(): Promise<Account> {
-        const data = await this.makeRequest<RawAccount>('GET', '/accounts/me');
+        const data = await this.request<RawAccount>('GET', '/accounts/me');
         return new Account(data);
     }
 }

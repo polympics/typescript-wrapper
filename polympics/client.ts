@@ -3,7 +3,9 @@ import {
     Credentials,
     ServerError,
     DataError,
-    ClientError
+    ClientError,
+    EmptyResponse,
+    PolympicsError
 } from './types';
 
 
@@ -15,15 +17,15 @@ type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 /** Fetch arguments (only the ones we need). */
 interface FetchOptions {
-    method?: string,
+    method: string,
+    headers: Record<string, string>,
     body?: string,
-    headers?: Record<string, string>
 }
 
 /** Base class for clients. */
 export class BaseClient {
     apiUrl: string;
-    credentials?: Credentials;
+    credentials?: Credentials | null;
 
     constructor({
         apiUrl = 'http://127.0.0.1:8000',
@@ -39,28 +41,30 @@ export class BaseClient {
             case 500:
                 throw new ServerError(500);
             case 204:
-                return null
+                throw new EmptyResponse(204);
         }
         const data = await response.json();
         if (response.status < 400) {
             return data;
         }
         if (response.status === 422) {
-            throw new DataError(422, data);
+            throw new DataError(422, data.detail);
         }
         throw new ClientError(response.status, data.detail);
     }
 
     /** Make a request to an API endpoint. */
-    async makeRequest<Type>(
+    async request<Type>(
         method: HttpMethod,
         endpoint: string,
-        data: Record<string, any> = {}
+        data: Record<string, any> = {},
+        { allowNullResponse = false } = {}
     ): Promise<Type> {
         let fetchOptions: FetchOptions = {
             method: method,
             headers: {}
         }
+        endpoint = this.apiUrl + endpoint;
         if (method === 'GET') {
             // Body-less method, put data in URL params.
             const params = new URLSearchParams(data);
@@ -78,6 +82,16 @@ export class BaseClient {
             fetchOptions.headers['Authorization'] = authHeader;
         }
         const response = await fetch(endpoint, fetchOptions);
-        return await this.handleResponse<Type>(response);
+        try {
+            return await this.handleResponse<Type>(response);
+        } catch(error) {
+            if (allowNullResponse && (error.code === 204)) {
+                // @ts-ignore: We know it's fine to return null because the
+                //             allowNullResponse flag was passed.
+                return null;
+            } else {
+                throw error;
+            }
+        }
     }
 }
