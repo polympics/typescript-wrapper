@@ -15,5 +15,5 @@ It is also available on NPM, called `polympics`.
 
 To use it on a web page, add the script:
 ```
-https://cdn.jsdelivr.net/npm/polympics@0.2.0/dist/polympics.js
+https://cdn.jsdelivr.net/npm/polympics@0.2.1/dist/polympics.js
 ```

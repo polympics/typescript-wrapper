@@ -1,6 +1,6 @@
 {
   "name": "polympics",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Wrapper for the Polympics API in typescript.",
   "main": "dist/index.ts",
   "types": "dist/index.d.ts",
