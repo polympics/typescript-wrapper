@@ -4,8 +4,7 @@ import {
     ServerError,
     DataError,
     ClientError,
-    EmptyResponse,
-    PolympicsError
+    EmptyResponse
 } from './types';
 
 
@@ -36,7 +35,7 @@ export class BaseClient {
     }
 
     /** Handle a response from the API, raising possible errors. */
-    async handleResponse<Type>(response: Response): Promise<Type> {
+    private async handleResponse<Type>(response: Response): Promise<Type> {
         switch (response.status) {
             case 500:
                 throw new ServerError(500);
@@ -54,7 +53,7 @@ export class BaseClient {
     }
 
     /** Make a request to an API endpoint. */
-    async request<Type>(
+    protected async request<Type>(
         method: HttpMethod,
         endpoint: string,
         data: Record<string, any> = {},

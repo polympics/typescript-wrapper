@@ -190,6 +190,7 @@ export class DataError extends PolympicsError {
         }
         this.message = `${code}: ${issues.length} parameter errors: `
             + lines.join('; ');
+        this.issues = issues;
     }
 };
 
@@ -198,5 +199,6 @@ export class ClientError extends PolympicsError {
     constructor(code: number, public detail: string) {
         super(code);
         this.message = `${code}: ${detail}`;
+        this.detail = detail;
     }
 }
