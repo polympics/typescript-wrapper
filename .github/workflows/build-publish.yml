@@ -16,4 +16,4 @@ jobs:
           npm build
       - uses: JS-DevTools/npm-publish@v1
         with:
-          token: ${{ secrets.NPM_AUTHENTICATION_TOKEN }}
+          token: ${{ secrets.NPM_AUTOMATION_TOKEN }}
