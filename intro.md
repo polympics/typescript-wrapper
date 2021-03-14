@@ -30,7 +30,7 @@ All three clients take an additional parameter, `apiUrl`. This is location at wh
 You can get an account by Discord ID using `getAccount`. For example:
 ```js
 const account = await client.getAccount('12345678901234');
-console.log(account.displayName);
+console.log(account.name);
 console.log(account.permissions);
 console.log(account.team.name);
 ```
@@ -51,7 +51,7 @@ You can list all accounts using `listAccounts`. For example:
 ```js
 const accountPaginator = client.listAccounts();
 for (const account of await accountPaginator.nextPage()) {
-    console.log(account.displayName);
+    console.log(account.name);
 }
 ```
 Note that this will only fetch the first page of results (20, by default). To fetch more, you should call `nextPage()` repeatedly until it returns an empty array. You can also get a specific page:
@@ -60,7 +60,7 @@ const accountPaginator = client.listAccounts();
 const data = await accountPaginator.getPage(4);
 console.log(data.result);    // Total result count.
 for (const account of data.data) {
-    console.log(account.displayName);
+    console.log(account.name);
 }
 ```
 You can use the `search` and `team` options to narrow down results:
@@ -70,7 +70,7 @@ const accountPaginator = client.listAccounts({
 });
 console.log(`Members from team ${team.name} with "bob" in their name:`);
 for (const account of await accountPaginator.nextPage()) {
-    console.log(account.displayName);
+    console.log(account.name);
 }
 ```
 
@@ -91,13 +91,13 @@ Registering a user is a simple call to `createAccount`:
 ```js
 const team = await client.getTeam(5);
 const account = await client.createAccount({
-    discordId: '1234567',
-    displayName: 'Artemis',
-    discriminator: 8472,
+    id: '1234567',
+    name: 'Artemis',
+    discriminator: '8472',
     avatarUrl: 'https://picsum.photos/200',
     team: team
 });
-console.assert(account.displayName === 'Artemis');
+console.assert(account.name === 'Artemis');
 console.assert(account.team.id === 5);
 ```
 Note that this requires an `AppClient` or `UserClient` with the `manageAccountDetails` permission.
@@ -105,9 +105,9 @@ Note that this requires an `AppClient` or `UserClient` with the `manageAccountDe
 You can also chose the permissions to grant the user:
 ```js
 await client.createAccount({
-    discordId: '1234567',
-    displayName: 'Artemis',
-    discriminator: 8472,
+    id: '1234567',
+    name: 'Artemis',
+    discriminator: '8472',
     permissions: polympics.PolympicsPermissions.manageTeams
         & polympics.PolympicsPermissions.manageAccountDetails
 });
@@ -126,9 +126,9 @@ Editing a user's account can be done with `updateAccount`:
 ```js
 let account = await client.getAccount('41129492792313');
 account = await client.updateAccount(account, {
-    displayName: 'Artemis', discriminator: 3910
+    name: 'Artemis', discriminator: '3910'
 });
-console.assert(account.displayName === 'Artemis');
+console.assert(account.name === 'Artemis');
 ```
 This requires an `AppClient` or `UserClient` with the `manageAccountDetails` permission.
 
@@ -199,13 +199,31 @@ Example:
 const account = await client.getAccount('1318219824080');
 const session = await client.createSession(account);
 console.log(session.expiresAt);
-const userClient = UserClient(session);
+const userClient = polympics.UserClient(session);
 ```
 This requires an `AppClient` with the `authenticateUsers` permission.
 
+### Authenticating via Discord OAuth2
+
+Alternatively, you can use a Discord user authentication token to create a
+user session (these can be obtained using Discord OAuth2, which is beyond the
+scope of this library). This has the advantage that you do not need to be
+otherwise authenticated, so it can be used on the frontend (eg. with the OAuth2
+implicit grant flow).
+
+Example:
+
+```js
+const session = await client.discordAuthenticate(token)
+const userClient = polympics.UserClient(session)
+```
+
+Note that the token used must be authorised for the `identify` scope.
+
+
 ### Resetting the client's token
 
-The token of an `AppClient` can be reset using `resetToken`. Note that the client *will* automatically update to use the new token. This function returns an `AppCredentials` object, which can be used in place of credentials, and also provides the attribute `displayName`, which is the human-readable name of the app.
+The token of an `AppClient` can be reset using `resetToken`. Note that the client *will* automatically update to use the new token. This function returns an `AppCredentials` object, which can be used in place of credentials, and also provides the attribute `name`, which is the human-readable name of the app.
 
 ```js
 await client.resetToken();
@@ -214,21 +232,19 @@ This requires an `AppClient` (you cannot reset a user token, since they are shor
 
 ### Getting the authenticated app
 
-When authenticated with an `AppClient`, you can use `getApp` to get metadata on the authenticated app. Note that unlike `resetToken`, this does *not* return the app's new token.
+When authenticated with an `AppClient`, you can use `getSelf` to get metadata on the authenticated app. Note that unlike `resetToken`, this does *not* return the app's new token.
 ```js
-const app = await client.getApp();
-console.log(app.displayName);
+const app = await client.getSelf();
+console.log(app.name);
 ```
-This requires an `AppClient`.
 
 ### Getting the authenticated user
 
-A `UserClient` can get the account of the user it has authenticated as using the `getSelf` method:
+A `UserClient` can get the account of the user it has authenticated as using the same method:
 ```js
 const account = await client.getSelf();
-console.log(account.displayName);
+console.log(account.name);
 ```
-This requires a `UserClient`, since an `AppClient` has no associated user.
 
 ### Errors
 

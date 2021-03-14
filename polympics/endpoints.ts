@@ -15,9 +15,9 @@ export interface NewTeam {
 }
 
 export interface NewAccount {
-    discordId: string;
-    displayName: string;
-    discriminator: number;
+    id: string;
+    name: string;
+    discriminator: string;
     permissions: number;
     avatarUrl: string;
     team: Team;
@@ -28,8 +28,8 @@ export interface TeamUpdate {
 }
 
 export interface AccountUpdate {
-    displayName?: string;
-    discriminator?: number;
+    name?: string;
+    discriminator?: string;
     grantPermissions?: number;
     revokePermissions?: number;
     avatarUrl?: string;
@@ -47,9 +47,9 @@ export interface AccountSearchOptions extends SearchOptions {
 /** Wrappers for endpoints that don't need authentication. */
 export class UnauthenticatedClient extends BaseClient {
     /** Get an account by Discord ID. */
-    async getAccount(discordId: string): Promise<Account> {
+    async getAccount(id: string): Promise<Account> {
         const data = await this.request<RawAccount>(
-            'GET', `/account/${discordId}`
+            'GET', `/account/${id}`
         );
         return new Account(data);
     }
@@ -110,6 +110,13 @@ export class UnauthenticatedClient extends BaseClient {
         }
         return new Paginator<Team>(getPage);
     }
+
+    /** Create a session from a Discord user token */
+    async discord_authenticate(token: string): Promise<Session> {
+        return await this.request<Session>('POST', '/auth/discord', {
+            'token': token
+        });
+    }
 }
 
 /** Wrappers for endpoints that require app *or* user authentication. */
@@ -121,9 +128,9 @@ class AuthenticatedClient extends UnauthenticatedClient {
      */
     async createAccount(account: NewAccount): Promise<Account> {
         const data = await this.request<RawAccount>(
-            'POST', '/accounts/signup', {
-                discord_id: account.discordId,
-                display_name: account.displayName,
+            'POST', '/accounts/new', {
+                id: account.id,
+                name: account.name,
                 discriminator: account.discriminator,
                 avatar_url: account.avatarUrl,
                 team: account.team.id,
@@ -144,8 +151,8 @@ class AuthenticatedClient extends UnauthenticatedClient {
         if (options.discriminator) {
             data.discriminator = options.discriminator;
         }
-        if (options.displayName) {
-            data.display_name = options.displayName;
+        if (options.name) {
+            data.name = options.name;
         }
         if (options.grantPermissions) {
             data.grant_permissions = options.grantPermissions;
@@ -157,7 +164,7 @@ class AuthenticatedClient extends UnauthenticatedClient {
             data.team = options.team.id;
         }
         const newData = await this.request<RawAccount>(
-            'PATCH', `/account/${account.discordId}`, data
+            'PATCH', `/account/${account.id}`, data
         );
         return new Account(newData);
     }
@@ -165,7 +172,7 @@ class AuthenticatedClient extends UnauthenticatedClient {
     /** Delete an account. */
     async deleteAccount(account: Account) {
         await this.request<null>(
-            'DELETE', `/account/${account.discordId}`, {},
+            'DELETE', `/account/${account.id}`, {},
             { allowNullResponse: true }
         );
     }
@@ -198,7 +205,7 @@ export class AppClient extends AuthenticatedClient {
     /** Create a user authentication session. */
     async createSession(account: Account): Promise<Session> {
         const data = await this.request<RawSession>(
-            'POST', `/account/${account.discordId}/session`
+            'POST', `/auth/create_session`, { account: account.id }
         );
         return new Session(data);
     }
@@ -206,7 +213,7 @@ export class AppClient extends AuthenticatedClient {
     /** Reset the authenticated app's token. */
     async resetToken(): Promise<AppCredentials> {
         const data = await this.request<RawAppCredentials>(
-            'POST', '/app/reset_token'
+            'POST', '/auth/reset_token'
         );
         const app = new AppCredentials(data);
         this.credentials = app;
@@ -214,17 +221,27 @@ export class AppClient extends AuthenticatedClient {
     }
 
     /** Get metadata on the authenticated app. */
-    async getApp(): Promise<App> {
-        const data =  await this.request<RawApp>('GET', '/app');
+    async getSelf(): Promise<App> {
+        const data =  await this.request<RawApp>('GET', '/auth/me');
         return new App(data);
     }
 }
 
 /** Wrappers for endpoints that require user authentication. */
 export class UserClient extends AuthenticatedClient {
+    /** Reset the session's token. */
+    async resetToken(): Promise<Session> {
+        const data = await this.request<RawSession>(
+            'POST', '/auth/reset_token'
+        );
+        const app = new Session(data);
+        this.credentials = app;
+        return app;
+    }
+
     /** Get the account for the authenticated user. */
     async getSelf(): Promise<Account> {
-        const data = await this.request<RawAccount>('GET', '/accounts/me');
+        const data = await this.request<RawAccount>('GET', '/auth/me');
         return new Account(data);
     }
 }

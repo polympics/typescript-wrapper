@@ -35,9 +35,9 @@ export class Team {
 
 /** User account object as returned by the API. */
 export interface RawAccount {
-    discord_id: string,
-    display_name: string,
-    discriminator: number,
+    id: string,
+    name: string,
+    discriminator: string,
     created_at: number,
     permissions: number,
     avatar_url: string,
@@ -46,20 +46,20 @@ export interface RawAccount {
 
 /** User account object as used by the wrapper. */
 export class Account {
-    discordId: string;
-    displayName: string;
-    discriminator: number;
+    id: string;
+    name: string;
+    discriminator: string;
     createdAt: Date;
     permissions: number;
     avatarUrl: string;
     team: Team;
 
     constructor({
-            discord_id, display_name, discriminator, created_at,
+            id, name, discriminator, created_at,
             permissions, avatar_url, team
     }: RawAccount) {
-        this.discordId = discord_id;
-        this.displayName = display_name;
+        this.id = id;
+        this.name = name;
         this.discriminator = discriminator;
         this.createdAt = new Date(created_at * 1000);
         this.permissions = permissions;
@@ -131,17 +131,17 @@ export class Session implements Credentials {
 /** Metadata on an API app. */
 export interface RawApp {
     username: string,
-    display_name: string
+    name: string
 }
 
 /** Metadata on an API app. */
 export class App {
     username: string;
-    displayName: string;
+    name: string;
 
-    constructor({ username, display_name }: RawApp) {
+    constructor({ username, name }: RawApp) {
         this.username = username;
-        this.displayName = display_name;
+        this.name = name;
     }
 }
 
@@ -152,8 +152,8 @@ export type RawAppCredentials = Credentials & RawApp;
 export class AppCredentials extends App implements Credentials {
     password: string;
 
-    constructor({ username, password, display_name }: RawAppCredentials) {
-        super({ username: username, display_name: display_name });
+    constructor({ username, password, name }: RawAppCredentials) {
+        super({ username: username, name: name });
         this.password = password;
     }
 }
