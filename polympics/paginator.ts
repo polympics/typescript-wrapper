@@ -21,8 +21,9 @@ export class Paginator<Type> {
      * array (but won't invoke the API).
      */
     async nextPage(): Promise<Type[]> {
-        const response = await this.getPage({ page: this.lastPage });
+        const page = this.lastPage;
         this.lastPage += 1;
+        const response = await this.getPage({ page: page });
         return response.data;
     }
 }
