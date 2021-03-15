@@ -41,7 +41,7 @@ export interface RawAccount {
     created_at: number,
     permissions: number,
     avatar_url: string,
-    team: RawTeam
+    team: RawTeam | null
 }
 
 /** User account object as used by the wrapper. */
