@@ -52,7 +52,7 @@ export class Account {
     createdAt: Date;
     permissions: number;
     avatarUrl: string;
-    team: Team;
+    team: Team | null;
 
     constructor({
             id, name, discriminator, created_at,
@@ -64,7 +64,11 @@ export class Account {
         this.createdAt = new Date(created_at * 1000);
         this.permissions = permissions;
         this.avatarUrl = avatar_url;
-        this.team = new Team(team);
+        if (team) {
+            this.team = new Team(team);
+        } else {
+            this.team = null;
+        }
     }
 }
 
