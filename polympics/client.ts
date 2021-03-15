@@ -27,7 +27,7 @@ export class BaseClient {
     credentials?: Credentials | null;
 
     constructor({
-        apiUrl = 'http://127.0.0.1:8000',
+        apiUrl = 'https://api.polytopia.fun',
         credentials = null
     } = {}) {
         this.apiUrl = apiUrl;
