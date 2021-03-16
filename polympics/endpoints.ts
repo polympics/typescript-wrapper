@@ -112,7 +112,7 @@ export class UnauthenticatedClient extends BaseClient {
     }
 
     /** Create a session from a Discord user token */
-    async discord_authenticate(token: string): Promise<Session> {
+    async discordAuthenticate(token: string): Promise<Session> {
         return await this.request<Session>('POST', '/auth/discord', {
             'token': token
         });
