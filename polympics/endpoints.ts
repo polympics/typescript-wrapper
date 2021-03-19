@@ -33,7 +33,7 @@ export interface AccountUpdate {
     grantPermissions?: number;
     revokePermissions?: number;
     avatarUrl?: string;
-    team?: Team;
+    team?: Team | null;
 }
 
 export interface SearchOptions {
@@ -162,8 +162,8 @@ class AuthenticatedClient extends UnauthenticatedClient {
         if (options.revokePermissions) {
             data.revoke_permissions = options.revokePermissions;
         }
-        if (options.team) {
-            data.team = options.team.id;
+        if (options.team !== undefined) {
+            data.team = options.team ? options.team.id : 0;
         }
         const newData = await this.request<RawAccount>(
             'PATCH', `/account/${account.id}`, data

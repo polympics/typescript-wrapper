@@ -136,7 +136,15 @@ You can similarly update a user's team:
 ```js
 await client.updateAccount(account, { team: team });
 ```
-This requires an `AppClient` or `UserClient` with the `manageAccountTeams` permission, or just a `UserClient` with the `manageOwnTeam` permission who is a member of the given team.
+This requires an `AppClient` or `UserClient` with the `manageAccountTeams` permission, or a `UserClient` authenticated with the given account.
+
+By setting `team` to `null`, you can remove a user from a team;
+```js
+await client.updateAccount(account, { team: null });
+```
+This requires permissions as explained above for adding a user to a team,
+with the addition that you can remove a user from a team if you are a member
+of that team and have the `manageOwnTeam` permission.
 
 You can also update user permissions with the `grantPermissions` and `revokePermissions` options, subject to the rules outlined in "Creating an account".
 
