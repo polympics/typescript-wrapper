@@ -68,11 +68,11 @@ export class UnauthenticatedClient extends BaseClient {
         async function getPage(
                 params: Record<string, any>
         ): Promise<PaginatedResponse<Account>> {
-            if (search) {
-                params.q = search;
-            }
-            if (team) {
-                params.team = team.id;
+            if (search) params.q = search;
+            if (team) params.team = team.id;
+            if (params.perPage) {
+                params.per_page = params.perPage;
+                delete params.perPage;
             }
             const data = await thisClient.request<
                     RawPaginatedResponse<RawAccount>
@@ -94,8 +94,10 @@ export class UnauthenticatedClient extends BaseClient {
         async function getPage(
                 params: Record<string, any>
         ): Promise<PaginatedResponse<Team>> {
-            if (search) {
-                params.q = search;
+            if (search) params.q = search;
+            if (params.perPage) {
+                params.per_page = params.perPage;
+                delete params.perPage;
             }
             const data = await thisClient.request<
                     RawPaginatedResponse<RawTeam>
