@@ -2887,7 +2887,13 @@ img {
 			<p>You can similarly update a user&#39;s team:</p>
 			<pre><code class="language-js"><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { team: </span><span style="color: #268BD2">team</span><span style="color: #657B83"> });</span>
 </code></pre>
-			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAccountTeams</code> permission, or just a <code>UserClient</code> with the <code>manageOwnTeam</code> permission who is a member of the given team.</p>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAccountTeams</code> permission, or a <code>UserClient</code> authenticated with the given account.</p>
+			<p>By setting <code>team</code> to <code>null</code>, you can remove a user from a team;</p>
+			<pre><code class="language-js"><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { team: </span><span style="color: #B58900">null</span><span style="color: #657B83"> });</span>
+</code></pre>
+			<p>This requires permissions as explained above for adding a user to a team,
+				with the addition that you can remove a user from a team if you are a member
+			of that team and have the <code>manageOwnTeam</code> permission.</p>
 			<p>You can also update user permissions with the <code>grantPermissions</code> and <code>revokePermissions</code> options, subject to the rules outlined in &quot;Creating an account&quot;.</p>
 			<p>Example:</p>
 			<pre><code class="language-js"><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, {</span>
