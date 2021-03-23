@@ -2885,21 +2885,27 @@ img {
 </code></pre>
 			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAccountDetails</code> permission.</p>
 			<p>You can similarly update a user&#39;s team:</p>
-			<pre><code class="language-js"><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { team: </span><span style="color: #268BD2">team</span><span style="color: #657B83"> });</span>
+			<pre><code class="language-js"><span style="color: #268BD2">account</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { team: </span><span style="color: #268BD2">team</span><span style="color: #657B83"> });</span>
 </code></pre>
 			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAccountTeams</code> permission, or a <code>UserClient</code> authenticated with the given account.</p>
 			<p>By setting <code>team</code> to <code>null</code>, you can remove a user from a team;</p>
-			<pre><code class="language-js"><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { team: </span><span style="color: #B58900">null</span><span style="color: #657B83"> });</span>
+			<pre><code class="language-js"><span style="color: #268BD2">account</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { team: </span><span style="color: #B58900">null</span><span style="color: #657B83"> });</span>
 </code></pre>
 			<p>This requires permissions as explained above for adding a user to a team,
 				with the addition that you can remove a user from a team if you are a member
 			of that team and have the <code>manageOwnTeam</code> permission.</p>
 			<p>You can also update user permissions with the <code>grantPermissions</code> and <code>revokePermissions</code> options, subject to the rules outlined in &quot;Creating an account&quot;.</p>
 			<p>Example:</p>
-			<pre><code class="language-js"><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, {</span>
+			<pre><code class="language-js"><span style="color: #268BD2">account</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, {</span>
 <span style="color: #657B83">    grantPermissions: </span><span style="color: #268BD2">polympics</span><span style="color: #657B83">.</span><span style="color: #268BD2">PolympicsPermissions</span><span style="color: #657B83">.</span><span style="color: #268BD2">manageOwnTeam</span><span style="color: #657B83">,</span>
 <span style="color: #657B83">    revokePermissions: </span><span style="color: #268BD2">polympics</span><span style="color: #657B83">.</span><span style="color: #268BD2">PolympicsPermissions</span><span style="color: #657B83">.</span><span style="color: #268BD2">manageTeams</span>
 <span style="color: #657B83">});</span>
+</code></pre>
+			<p>Using the <code>discordToken</code> option, you can update a user&#39;s name,
+				discriminator and avatar URL to match Discord. This requires no permissions,
+			since user tokens can be authenticated with Discord.</p>
+			<p>Example:</p>
+			<pre><code class="language-js"><span style="color: #268BD2">account</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAccount</span><span style="color: #657B83">(</span><span style="color: #268BD2">account</span><span style="color: #657B83">, { discordToken: </span><span style="color: #268BD2">token</span><span style="color: #657B83"> });</span>
 </code></pre>
 			<a href="#deleting-an-account" id="deleting-an-account" style="color: inherit; text-decoration: none;">
 				<h3>Deleting an account</h3>
@@ -2910,7 +2916,7 @@ img {
 <span style="color: #2AA198">teametAccount(&#039;124214913289&#039;);</span>
 <span style="color: #2AA198">await client.deleteAccount(account);</span>
 </code></pre>
-			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAccountDetails</code> permission.</p>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAccountDetails</code> permission, or just a <code>UserClient</code> associated with the account being deleted.</p>
 			<a href="#creating-a-team" id="creating-a-team" style="color: inherit; text-decoration: none;">
 				<h3>Creating a team</h3>
 			</a>
