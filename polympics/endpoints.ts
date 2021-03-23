@@ -34,6 +34,7 @@ export interface AccountUpdate {
     revokePermissions?: number;
     avatarUrl?: string;
     team?: Team | null;
+    discordToken?: string;
 }
 
 export interface SearchOptions {
@@ -119,28 +120,6 @@ export class UnauthenticatedClient extends BaseClient {
             'token': token
         });
     }
-}
-
-/** Wrappers for endpoints that require app *or* user authentication. */
-class AuthenticatedClient extends UnauthenticatedClient {
-    /** Create a new account.
-     *
-     * Note that although it accepts an Account object, the createdAt
-     * attribute will be ignored if set.
-     */
-    async createAccount(account: NewAccount): Promise<Account> {
-        const data = await this.request<RawAccount>(
-            'POST', '/accounts/new', {
-                id: account.id,
-                name: account.name,
-                discriminator: account.discriminator,
-                avatar_url: account.avatarUrl,
-                team: account.team.id,
-                permissions: account.permissions
-            }
-        );
-        return new Account(data);
-    }
 
     /** Edit an account. */
     async updateAccount(
@@ -165,10 +144,35 @@ class AuthenticatedClient extends UnauthenticatedClient {
         if (options.team !== undefined) {
             data.team = options.team ? options.team.id : 0;
         }
+        if (options.discordToken) {
+            data.discord_token = options.discordToken;
+        }
         const newData = await this.request<RawAccount>(
             'PATCH', `/account/${account.id}`, data
         );
         return new Account(newData);
+    }
+}
+
+/** Wrappers for endpoints that require app *or* user authentication. */
+class AuthenticatedClient extends UnauthenticatedClient {
+    /** Create a new account.
+     *
+     * Note that although it accepts an Account object, the createdAt
+     * attribute will be ignored if set.
+     */
+    async createAccount(account: NewAccount): Promise<Account> {
+        const data = await this.request<RawAccount>(
+            'POST', '/accounts/new', {
+                id: account.id,
+                name: account.name,
+                discriminator: account.discriminator,
+                avatar_url: account.avatarUrl,
+                team: account.team.id,
+                permissions: account.permissions
+            }
+        );
+        return new Account(data);
     }
 
     /** Delete an account. */

@@ -134,13 +134,13 @@ This requires an `AppClient` or `UserClient` with the `manageAccountDetails` per
 
 You can similarly update a user's team:
 ```js
-await client.updateAccount(account, { team: team });
+account = await client.updateAccount(account, { team: team });
 ```
 This requires an `AppClient` or `UserClient` with the `manageAccountTeams` permission, or a `UserClient` authenticated with the given account.
 
 By setting `team` to `null`, you can remove a user from a team;
 ```js
-await client.updateAccount(account, { team: null });
+account = await client.updateAccount(account, { team: null });
 ```
 This requires permissions as explained above for adding a user to a team,
 with the addition that you can remove a user from a team if you are a member
@@ -151,10 +151,19 @@ You can also update user permissions with the `grantPermissions` and `revokePerm
 Example:
 
 ```js
-await client.updateAccount(account, {
+account = await client.updateAccount(account, {
     grantPermissions: polympics.PolympicsPermissions.manageOwnTeam,
     revokePermissions: polympics.PolympicsPermissions.manageTeams
 });
+```
+
+Using the `discordToken` option, you can update a user's name,
+discriminator and avatar URL to match Discord. This requires no permissions,
+since user tokens can be authenticated with Discord.
+
+Example:
+```js
+account = await client.updateAccount(account, { discordToken: token });
 ```
 
 ### Deleting an account
@@ -167,7 +176,7 @@ teametAccount('124214913289');
 await client.deleteAccount(account);
 ```
 
-This requires an `AppClient` or `UserClient` with the `manageAccountDetails` permission.
+This requires an `AppClient` or `UserClient` with the `manageAccountDetails` permission, or just a `UserClient` associated with the account being deleted.
 
 ### Creating a team
 
@@ -227,7 +236,6 @@ const userClient = polympics.UserClient(session)
 ```
 
 Note that the token used must be authorised for the `identify` scope.
-
 
 ### Resetting the client's token
 
