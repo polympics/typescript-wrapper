@@ -1,8 +1,8 @@
 {
   "name": "polympics",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Wrapper for the Polympics API in typescript.",
-  "main": "dist/index.ts",
+  "main": "dist/polympics.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "webpack",
