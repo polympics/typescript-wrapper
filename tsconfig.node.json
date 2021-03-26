@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    /* https://www.staging-typescript.org/tsconfig */
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "lib",
+    "strict": true,
+    "lib": ["ES2015"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
