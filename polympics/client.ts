@@ -6,8 +6,7 @@ import {
     ClientError,
     EmptyResponse
 } from './types';
-import axios from 'axios';
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 
 /** HTTP verbs used by the API.
@@ -55,7 +54,8 @@ export class BaseClient {
         { allowNullResponse = false } = {}
     ): Promise<Type> {
         let axiosOptions: AxiosRequestConfig = {
-            url: this.apiUrl + endpoint,
+            baseURL: this.apiUrl,
+            url: endpoint,
             method: method,
             headers: {}
         }

@@ -13,8 +13,7 @@ const webConfig = {
     library: "polympics"
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"],
-    preferRelative: true
+    extensions: [".ts", ".tsx", ".js"]
   },
   module: {
     rules: [
@@ -30,7 +29,7 @@ const webConfig = {
 };
 
 const nodeConfig = {
-  mode: "production",
+  mode: "development",
   target: "node",
   devtool: false,
   entry: {
@@ -39,14 +38,13 @@ const nodeConfig = {
   output: {
     path: path.resolve(__dirname, './lib'),
     filename: "polympics.js",
+    globalObject: "this",
     library: {
-      name: "polympics",
       type: "commonjs2"
     }
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"],
-    preferRelative: true
+    extensions: [".ts", ".tsx", ".js"]
   },
   module: {
     rules: [
