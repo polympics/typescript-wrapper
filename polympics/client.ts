@@ -23,7 +23,7 @@ export class BaseClient {
     constructor({
         apiUrl = 'https://api.polytopia.fun',
         credentials = null
-    } = {}) {
+    }: { apiUrl?: string, credentials?: Credentials | null } = {}) {
         this.apiUrl = apiUrl;
         this.credentials = credentials;
     }
@@ -57,7 +57,9 @@ export class BaseClient {
             baseURL: this.apiUrl,
             url: endpoint,
             method: method,
-            headers: {}
+            headers: {},
+            // We'll handle bad status codes ourselves, later.
+            validateStatus: () => true
         }
         if (method === 'GET') {
             // Body-less method, put data in URL params.
