@@ -1,8 +1,9 @@
 {
   "name": "polympics",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Wrapper for the Polympics API in typescript.",
   "main": "lib/polympics.js",
+  "browser": "dist/polympics.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "webpack",
@@ -23,14 +24,15 @@
   },
   "homepage": "https://github.com/polympics/typescript-wrapper#readme",
   "devDependencies": {
+    "@types/node-fetch": "^2.5.8",
     "ts-loader": "^8.0.18",
     "typescript": "^4.2.3",
     "webpack": "^5.25.0",
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "debug": "^4.3.1",
+    "btoa": "^1.2.1",
+    "node-fetch": "^2.6.1",
     "typedoc": "^0.20.30",
     "url-search-params-polyfill": "^8.1.1"
   }

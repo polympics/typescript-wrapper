@@ -1,25 +1,26 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const webConfig = {
-  mode: "production",
-  target: "web",
+  mode: 'production',
+  target: 'web',
   devtool: false,
   entry: {
-    main: "./polympics/index.ts",
+    main: './polympics/index.ts',
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: "polympics.js",
-    library: "polympics"
+    filename: 'polympics.js',
+    library: 'polympics'
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: ['.ts', '.tsx', '.js']
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader",
+        loader: 'ts-loader',
         options: {
           configFile: 'tsconfig.web.json'
         }
@@ -29,33 +30,43 @@ const webConfig = {
 };
 
 const nodeConfig = {
-  mode: "development",
-  target: "node",
+  mode: 'development',
+  target: 'node',
   devtool: false,
   entry: {
-    main: "./polympics/index.ts",
+    main: './polympics/index.ts',
   },
   output: {
     path: path.resolve(__dirname, './lib'),
-    filename: "polympics.js",
-    globalObject: "this",
+    filename: 'polympics.js',
+    globalObject: 'this',
     library: {
-      type: "commonjs2"
+      type: 'commonjs2'
     }
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: ['.ts', '.tsx', '.js']
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader",
+        loader: 'ts-loader',
         options: {
           configFile: 'tsconfig.node.json'
         }
       }
     ]
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      fetch: ['../node_polyfills', 'fetch'],
+      btoa: ['../node_polyfills', 'btoa']
+    })
+  ],
+  externals: {
+    'node-fetch': 'node-fetch',
+    'btoa': 'btoa'
   }
 };
 

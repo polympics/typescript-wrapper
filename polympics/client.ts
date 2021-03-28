@@ -6,8 +6,13 @@ import {
     ClientError,
     EmptyResponse
 } from './types';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
+/** Fetch arguments (only the ones we need). */
+interface FetchOptions {
+    method: string,
+    headers: Record<string, string>,
+    body?: string,
+}
 
 /** HTTP verbs used by the API.
  *
@@ -29,14 +34,14 @@ export class BaseClient {
     }
 
     /** Handle a response from the API, raising possible errors. */
-    private async handleResponse<Type>(response: AxiosResponse): Promise<Type> {
+    private async handleResponse<Type>(response: Response): Promise<Type> {
         switch (response.status) {
             case 500:
                 throw new ServerError(500);
             case 204:
                 throw new EmptyResponse(204);
         }
-        const data = await response.data;
+        const data = await response.json();
         if (response.status < 400) {
             return data;
         }
@@ -53,29 +58,26 @@ export class BaseClient {
         data: Record<string, any> = {},
         { allowNullResponse = false } = {}
     ): Promise<Type> {
-        let axiosOptions: AxiosRequestConfig = {
-            baseURL: this.apiUrl,
-            url: endpoint,
+        let url = this.apiUrl + endpoint;
+        const fetchOptions: FetchOptions = {
             method: method,
-            headers: {},
-            // We'll handle bad status codes ourselves, later.
-            validateStatus: () => true
+            headers: {}
         }
         if (method === 'GET') {
             // Body-less method, put data in URL params.
-            axiosOptions.params = data;
+            const params = new URLSearchParams(data);
+            url += `?${params.toString()}`;
         } else {
             // Body-full method, put data in JSON body.
-            axiosOptions.data = data;
-            axiosOptions.headers['Content-Type'] = 'application/json';
+            fetchOptions.body = JSON.stringify(data);
+            fetchOptions.headers['Content-Type'] = 'application/json';
         }
         if (this.credentials) {
-            axiosOptions.auth = {
-                username: this.credentials.username,
-                password: this.credentials.password
-            }
+            fetchOptions.headers['Authorization'] = 'Basic' + btoa(
+                `${this.credentials.username}:${this.credentials.password}`
+            );
         }
-        const response = await axios(axiosOptions);
+        const response = await fetch(url, fetchOptions);
         try {
             return await this.handleResponse<Type>(response);
         } catch(error) {

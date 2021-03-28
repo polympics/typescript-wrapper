@@ -6,7 +6,7 @@
     "declaration": true,
     "outDir": "lib",
     "strict": true,
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "DOM"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
