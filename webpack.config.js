@@ -38,7 +38,7 @@ const nodeConfig = {
   },
   output: {
     path: path.resolve(__dirname, './lib'),
-    filename: 'polympics.js',
+    filename: 'index.js',
     globalObject: 'this',
     library: {
       type: 'commonjs2'
