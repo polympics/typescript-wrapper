@@ -18,9 +18,9 @@ export interface NewAccount {
     id: string;
     name: string;
     discriminator: string;
-    permissions: number;
     avatarUrl: string;
-    team: Team;
+    permissions?: number;
+    team?: Team | null;
 }
 
 export interface TeamUpdate {
@@ -168,8 +168,8 @@ class AuthenticatedClient extends UnauthenticatedClient {
                 name: account.name,
                 discriminator: account.discriminator,
                 avatar_url: account.avatarUrl,
-                team: account.team.id,
-                permissions: account.permissions
+                team: account.team ? account.team.id : null,
+                permissions: account.permissions || 0
             }
         );
         return new Account(data);
