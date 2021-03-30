@@ -73,7 +73,7 @@ export class BaseClient {
             fetchOptions.headers['Content-Type'] = 'application/json';
         }
         if (this.credentials) {
-            fetchOptions.headers['Authorization'] = 'Basic' + btoa(
+            fetchOptions.headers['Authorization'] = 'Basic ' + btoa(
                 `${this.credentials.username}:${this.credentials.password}`
             );
         }
