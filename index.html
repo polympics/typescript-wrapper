@@ -2751,6 +2751,14 @@ img {
 <span style="color: #268BD2">console</span><span style="color: #657B83">.</span><span style="color: #268BD2">log</span><span style="color: #657B83">(</span><span style="color: #268BD2">team</span><span style="color: #657B83">.</span><span style="color: #268BD2">name</span><span style="color: #657B83">);</span>
 <span style="color: #268BD2">console</span><span style="color: #657B83">.</span><span style="color: #268BD2">log</span><span style="color: #657B83">(</span><span style="color: #268BD2">team</span><span style="color: #657B83">.</span><span style="color: #268BD2">memberCount</span><span style="color: #657B83">);</span>
 </code></pre>
+			<a href="#getting-an-award" id="getting-an-award" style="color: inherit; text-decoration: none;">
+				<h3>Getting an award</h3>
+			</a>
+			<p>You can get an award by ID using <code>getAward</code>. For example:</p>
+			<pre><code class="language-js"><span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAward</span><span style="color: #657B83">(</span><span style="color: #D33682">14</span><span style="color: #657B83">);</span>
+<span style="color: #268BD2">console</span><span style="color: #657B83">.</span><span style="color: #268BD2">log</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">.</span><span style="color: #268BD2">title</span><span style="color: #657B83">);</span>
+<span style="color: #268BD2">console</span><span style="color: #657B83">.</span><span style="color: #268BD2">log</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">.</span><span style="color: #268BD2">imageUrl</span><span style="color: #657B83">);</span>
+</code></pre>
 			<a href="#listing-all-accounts" id="listing-all-accounts" style="color: inherit; text-decoration: none;">
 				<h3>Listing all accounts</h3>
 			</a>
@@ -2889,6 +2897,56 @@ img {
 <span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">deleteTeam</span><span style="color: #657B83">(</span><span style="color: #268BD2">team</span><span style="color: #657B83">);</span>
 </code></pre>
 			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageTeams</code> permission, or just a <code>UserClient</code> with the <code>manageOwnTeam</code> permission who is a member of the given team.</p>
+			<a href="#creating-an-award" id="creating-an-award" style="color: inherit; text-decoration: none;">
+				<h3>Creating an award</h3>
+			</a>
+			<p>You can create an award with the <code>createAward</code> method:</p>
+			<pre><code class="language-js"><span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">account_1</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAccount</span><span style="color: #657B83">(</span><span style="color: #D33682">508140149014901</span><span style="color: #657B83">);</span>
+<span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">team</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getTeam</span><span style="color: #657B83">(</span><span style="color: #D33682">123</span><span style="color: #657B83">);</span>
+<span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">createAward</span><span style="color: #657B83">({</span>
+<span style="color: #657B83">    title: </span><span style="color: #2AA198">&quot;Perfect 10 Gold&quot;</span><span style="color: #657B83">,</span>
+<span style="color: #657B83">    imageUrl: </span><span style="color: #2AA198">&quot;https://link.to/icon.png&quot;</span><span style="color: #657B83">,</span>
+<span style="color: #657B83">    team: </span><span style="color: #268BD2">team</span><span style="color: #657B83">,</span>
+<span style="color: #657B83">    accounts: [</span><span style="color: #268BD2">account_1</span><span style="color: #657B83">]</span>
+<span style="color: #657B83">})</span>
+<span style="color: #268BD2">console</span><span style="color: #657B83">.</span><span style="color: #268BD2">log</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">.</span><span style="color: #268BD2">id</span><span style="color: #657B83">);</span>
+<span style="color: #268BD2">console</span><span style="color: #657B83">.</span><span style="color: #268BD2">log</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">.</span><span style="color: #268BD2">title</span><span style="color: #657B83">);</span>
+</code></pre>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAwards</code> permission.</p>
+			<a href="#editing-an-award" id="editing-an-award" style="color: inherit; text-decoration: none;">
+				<h3>Editing an award</h3>
+			</a>
+			<p>You can edit an award with the <code>updateAward</code> method:</p>
+			<pre><code class="language-js"><span style="color: #073642">let</span><span style="color: #657B83"> </span><span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAward</span><span style="color: #657B83">(</span><span style="color: #D33682">12</span><span style="color: #657B83">);</span>
+<span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">updateAward</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">, { title: </span><span style="color: #2AA198">&quot;Gold - Perfect 10&quot;</span><span style="color: #657B83"> });</span>
+</code></pre>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAwards</code> permission.</p>
+			<a href="#deleting-an-award" id="deleting-an-award" style="color: inherit; text-decoration: none;">
+				<h3>Deleting an award</h3>
+			</a>
+			<p>You can delete an award with the <code>deleteAward</code> method:</p>
+			<pre><code class="language-js"><span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAward</span><span style="color: #657B83">(</span><span style="color: #D33682">52</span><span style="color: #657B83">);</span>
+<span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">deleteAward</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">)</span>
+</code></pre>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAwards</code> permission.</p>
+			<a href="#giving-an-award-to-a-user" id="giving-an-award-to-a-user" style="color: inherit; text-decoration: none;">
+				<h3>Giving an award to a user</h3>
+			</a>
+			<p>To give an award to a player, use <code>giveAward</code>:</p>
+			<pre><code class="language-js"><span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">account</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAccount</span><span style="color: #657B83">(</span><span style="color: #D33682">130914109419411</span><span style="color: #657B83">);</span>
+<span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAward</span><span style="color: #657B83">(</span><span style="color: #D33682">19</span><span style="color: #657B83">);</span>
+<span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">giveAward</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">, </span><span style="color: #268BD2">account</span><span style="color: #657B83">);</span>
+</code></pre>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAwards</code> permission.</p>
+			<a href="#taking-an-award-from-a-user" id="taking-an-award-from-a-user" style="color: inherit; text-decoration: none;">
+				<h3>Taking an award from a user</h3>
+			</a>
+			<p>To give an award to a player, use <code>takeAward</code>:</p>
+			<pre><code class="language-js"><span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">account</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAccount</span><span style="color: #657B83">(</span><span style="color: #D33682">8713710931790741</span><span style="color: #657B83">);</span>
+<span style="color: #073642">const</span><span style="color: #657B83"> </span><span style="color: #268BD2">award</span><span style="color: #657B83"> </span><span style="color: #859900">=</span><span style="color: #657B83"> </span><span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">getAward</span><span style="color: #657B83">(</span><span style="color: #D33682">13</span><span style="color: #657B83">);</span>
+<span style="color: #859900">await</span><span style="color: #657B83"> </span><span style="color: #268BD2">client</span><span style="color: #657B83">.</span><span style="color: #268BD2">takeAward</span><span style="color: #657B83">(</span><span style="color: #268BD2">award</span><span style="color: #657B83">, </span><span style="color: #268BD2">account</span><span style="color: #657B83">);</span>
+</code></pre>
+			<p>This requires an <code>AppClient</code> or <code>UserClient</code> with the <code>manageAwards</code> permission.</p>
 			<a href="#creating-a-user-auth-session" id="creating-a-user-auth-session" style="color: inherit; text-decoration: none;">
 				<h3>Creating a user auth session</h3>
 			</a>
