@@ -3,6 +3,8 @@ import { BaseClient } from './client';
 import {
     RawTeam, Team,
     RawAccount, Account,
+    RawAward, Award,
+    RawExtendedAward, ExtendedAward,
     RawPaginatedResponse, PaginatedResponse,
     RawSession, Session,
     RawApp, App,
@@ -23,6 +25,13 @@ export interface NewAccount {
     team?: Team | null;
 }
 
+export interface NewAward {
+    title: string;
+    imageUrl: string;
+    team: Team;
+    accounts?: Array<Account>;
+}
+
 export interface TeamUpdate {
     name: string;
 }
@@ -35,6 +44,12 @@ export interface AccountUpdate {
     avatarUrl?: string;
     team?: Team | null;
     discordToken?: string;
+}
+
+export interface AwardUpdate {
+    title?: string;
+    imageUrl?: string;
+    team?: Team;
 }
 
 export interface SearchOptions {
@@ -63,7 +78,7 @@ export class UnauthenticatedClient extends BaseClient {
 
     /** Get a paginated list of accounts matching a query. */
     listAccounts(
-            { search = null, team = null}: AccountSearchOptions = {}
+        { search = null, team = null}: AccountSearchOptions = {}
     ): Paginator<Account> {
         const thisClient = this;
         async function getPage(
@@ -123,7 +138,7 @@ export class UnauthenticatedClient extends BaseClient {
 
     /** Edit an account. */
     async updateAccount(
-            account: Account, options: AccountUpdate
+        account: Account, options: AccountUpdate
     ): Promise<Account> {
         const data: Record<string, any> = {};
         if (options.avatarUrl) {
@@ -152,6 +167,14 @@ export class UnauthenticatedClient extends BaseClient {
         );
         return new Account(newData);
     }
+
+    /** Get an award by ID. */
+    async getAward(id: number): Promise<ExtendedAward> {
+        const data = await this.request<RawExtendedAward>(
+            'GET', `/award/${id}`
+        );
+        return new ExtendedAward(data);
+    }
 }
 
 /** Wrappers for endpoints that require app *or* user authentication. */
@@ -179,7 +202,7 @@ class AuthenticatedClient extends UnauthenticatedClient {
     async deleteAccount(account: Account) {
         await this.request<null>(
             'DELETE', `/account/${account.id}`, {},
-            { allowNullResponse: true }
+            { emptyResponse: true }
         );
     }
 
@@ -201,7 +224,58 @@ class AuthenticatedClient extends UnauthenticatedClient {
     /** Delete a team. */
     async deleteTeam(team: Team) {
         await this.request<null>(
-            'DELETE', `/team/${team.id}`, {}, { allowNullResponse: true }
+            'DELETE', `/team/${team.id}`, {}, { emptyResponse: true }
+        );
+    }
+
+    /** Create an award. */
+    async createAward(award: NewAward): Promise<Award> {
+        const accounts = award.accounts
+            ? award.accounts.map(account => account.id)
+            : [];
+        const raw = await this.request<RawAward>(
+            'POST', '/awards/new', {
+                title: award.title,
+                image_url: award.imageUrl,
+                team: award.team.id,
+                accounts: accounts,
+            }
+        );
+        return new Award(raw);
+    }
+
+    /** Edit an award. */
+    async updateAward(award: Award, options: AwardUpdate): Promise<Award> {
+        const data: Record<string, any> = {};
+        if (options.title) { data.title = options.title }
+        if (options.imageUrl) { data.image_url = options.imageUrl }
+        if (options.team) { data.team = options.team.id }
+        const raw = await this.request<RawAward>(
+            'PATCH', `/award/${award.id}`, data
+        );
+        return new Award(raw);
+    }
+
+    /** Delete an award. */
+    async deleteAward(award: Award): Promise<void> {
+        await this.request<null>(
+            'DELETE', `/award/${award.id}`, {}, { emptyResponse: true }
+        );
+    }
+
+    /** Give an existing award to a user. */
+    async giveAward(award: Award, account: Account): Promise<void> {
+        await this.request<null>(
+            'PUT', `/account/${account.id}/award/${award.id}`,
+            {}, { emptyResponse: true }
+        );
+    }
+
+    /** Take an award from a user. */
+    async takeAward(award: Award, account: Account): Promise<void> {
+        await this.request<null>(
+            'DELETE', `/account/${account.id}/award/${award.id}`,
+            {}, { emptyResponse: true }
         );
     }
 }

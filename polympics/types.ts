@@ -7,7 +7,8 @@ export enum PolympicsPermissions {
     manageAccountDetails = 1 << 2,
     manageTeams = 1 << 3,
     authenticateUsers = 1 << 4,
-    manageOwnTeam = 1 << 5
+    manageOwnTeam = 1 << 5,
+    manageAwards = 1 << 6,
 }
 
 /** Team object as returned by the API. */
@@ -15,7 +16,8 @@ export interface RawTeam {
     id: number,
     name: string,
     created_at: number,
-    member_count: number
+    member_count: number,
+    awards: Array<RawAward>,
 }
 
 /** Team object as used by the wrapper. */
@@ -24,12 +26,14 @@ export class Team {
     name: string;
     createdAt: Date;
     memberCount: number;
+    awards: Array<Award>;
 
-    constructor({ id, name, created_at, member_count }: RawTeam) {
+    constructor({ id, name, created_at, member_count, awards }: RawTeam) {
         this.id = id;
         this.name = name;
         this.createdAt = new Date(created_at * 1000);
         this.memberCount = member_count;
+        this.awards = awards.map(raw => new Award(raw));
     }
 }
 
@@ -41,7 +45,8 @@ export interface RawAccount {
     created_at: number,
     permissions: number,
     avatar_url: string,
-    team: RawTeam | null
+    team: RawTeam | null,
+    awards: Array<RawAward>,
 }
 
 /** User account object as used by the wrapper. */
@@ -53,10 +58,11 @@ export class Account {
     permissions: number;
     avatarUrl: string;
     team: Team | null;
+    awards: Array<Award>;
 
     constructor({
             id, name, discriminator, created_at,
-            permissions, avatar_url, team
+            permissions, avatar_url, team, awards
     }: RawAccount) {
         this.id = id;
         this.name = name;
@@ -64,11 +70,44 @@ export class Account {
         this.createdAt = new Date(created_at * 1000);
         this.permissions = permissions;
         this.avatarUrl = avatar_url;
-        if (team) {
-            this.team = new Team(team);
-        } else {
-            this.team = null;
-        }
+        this.team = team ? new Team(team) : null;
+        this.awards = awards.map(raw => new Award(raw));
+    }
+}
+
+/** Award data as returned by the API. */
+export interface RawAward {
+    id: number;
+    title: string;
+    image_url: string;
+}
+
+/** Award data including awardess from the API. */
+export interface RawExtendedAward {
+    award: RawAward;
+    awardees: Array<RawAccount>;
+}
+
+/** Award object as used by the wrapper. */
+export class Award {
+    id: number;
+    title: string;
+    imageUrl: string;
+
+    constructor({ id, title, image_url }: RawAward) {
+        this.id = id;
+        this.title = title;
+        this.imageUrl = image_url;
+    }
+}
+
+/** Award object used by the wrapper with awardees included. */
+export class ExtendedAward extends Award {
+    awardees: Array<Account>;
+
+    constructor({ award, awardees }: RawExtendedAward) {
+        super(award);
+        this.awardees = awardees.map(raw => new Account(raw));
     }
 }
 

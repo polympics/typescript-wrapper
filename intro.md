@@ -1,4 +1,3 @@
-
 ## Intro
 
 ### Creating a client
@@ -43,6 +42,16 @@ You can get a team by ID using `getTeam`. For example:
 const team = await client.getTeam(31);
 console.log(team.name);
 console.log(team.memberCount);
+```
+
+### Getting an award
+
+You can get an award by ID using ``getAward``. For example:
+
+```js
+const award = await client.getAward(14);
+console.log(award.title);
+console.log(award.imageUrl);
 ```
 
 ### Listing all accounts
@@ -206,6 +215,71 @@ let team = await client.getTeam(28);
 await client.deleteTeam(team);
 ```
 This requires an `AppClient` or `UserClient` with the `manageTeams` permission, or just a `UserClient` with the `manageOwnTeam` permission who is a member of the given team.
+
+### Creating an award
+
+You can create an award with the ``createAward`` method:
+
+```js
+const account_1 = await client.getAccount(508140149014901);
+const team = await client.getTeam(123);
+const award = await client.createAward({
+    title: "Perfect 10 Gold",
+    imageUrl: "https://link.to/icon.png",
+    team: team,
+    accounts: [account_1]
+})
+console.log(award.id);
+console.log(award.title);
+```
+
+This requires an `AppClient` or `UserClient` with the `manageAwards` permission.
+
+### Editing an award
+
+You can edit an award with the ``updateAward`` method:
+
+```js
+let award = await client.getAward(12);
+award = await client.updateAward(award, { title: "Gold - Perfect 10" });
+```
+
+This requires an `AppClient` or `UserClient` with the `manageAwards` permission.
+
+### Deleting an award
+
+You can delete an award with the ``deleteAward`` method:
+
+```js
+const award = await client.getAward(52);
+await client.deleteAward(award)
+```
+
+This requires an `AppClient` or `UserClient` with the `manageAwards` permission.
+
+### Giving an award to a user
+
+To give an award to a player, use ``giveAward``:
+
+```js
+const account = await client.getAccount(130914109419411);
+const award = await client.getAward(19);
+await client.giveAward(award, account);
+```
+
+This requires an `AppClient` or `UserClient` with the `manageAwards` permission.
+
+### Taking an award from a user
+
+To give an award to a player, use ``takeAward``:
+
+```js
+const account = await client.getAccount(8713710931790741);
+const award = await client.getAward(13);
+await client.takeAward(award, account);
+```
+
+This requires an `AppClient` or `UserClient` with the `manageAwards` permission.
 
 ### Creating a user auth session
 

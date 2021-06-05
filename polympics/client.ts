@@ -18,7 +18,7 @@ interface FetchOptions {
  *
  * (There are other methods but the API doesn't use them.)
  */
-type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
 
 /** Base class for clients. */
 export class BaseClient {
@@ -34,21 +34,23 @@ export class BaseClient {
     }
 
     /** Handle a response from the API, raising possible errors. */
-    private async handleResponse<Type>(response: Response): Promise<Type> {
-        switch (response.status) {
-            case 500:
-                throw new ServerError(500);
-            case 204:
-                throw new EmptyResponse(204);
+    private async handleResponse<Type>(
+        response: Response, emptyResponse: boolean = false
+    ): Promise<Type> {
+        if (response.status >= 500) {
+            throw new ServerError(response.status);
         }
-        const data = await response.json();
         if (response.status < 400) {
-            return data;
+            // @ts-ignore: We know it's fine to return null because the
+            //             emptyResponse flag was passed.
+            if (emptyResponse) { return null }
+            else { return await response.json() }
         }
+        const error = (await response.json()).detail;
         if (response.status === 422) {
-            throw new DataError(422, data.detail);
+            throw new DataError(422, error);
         }
-        throw new ClientError(response.status, data.detail);
+        throw new ClientError(response.status, error);
     }
 
     /** Make a request to an API endpoint. */
@@ -56,7 +58,7 @@ export class BaseClient {
         method: HttpMethod,
         endpoint: string,
         data: Record<string, any> = {},
-        { allowNullResponse = false } = {}
+        { emptyResponse = false }: { emptyResponse?: boolean } = {}
     ): Promise<Type> {
         let url = this.apiUrl + endpoint;
         const fetchOptions: FetchOptions = {
@@ -78,16 +80,6 @@ export class BaseClient {
             );
         }
         const response = await fetch(url, fetchOptions);
-        try {
-            return await this.handleResponse<Type>(response);
-        } catch(error) {
-            if (allowNullResponse && (error.code === 204)) {
-                // @ts-ignore: We know it's fine to return null because the
-                //             allowNullResponse flag was passed.
-                return null;
-            } else {
-                throw error;
-            }
-        }
+        return await this.handleResponse<Type>(response, emptyResponse);
     }
 }
