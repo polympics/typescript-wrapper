@@ -5,8 +5,10 @@ export {
     UnauthenticatedClient,
     NewTeam,
     NewAccount,
+    NewAward,
     TeamUpdate,
     AccountUpdate,
+    AwardUpdate,
     SearchOptions,
     AccountSearchOptions
 } from './endpoints';
@@ -16,6 +18,8 @@ export {
     PolympicsPermissions,
     Team,
     Account,
+    Award,
+    ExtendedAward,
     PaginatedResponse,
     Credentials,
     Session,
