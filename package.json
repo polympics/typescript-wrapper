@@ -1,13 +1,13 @@
 {
   "name": "polympics",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Wrapper for the Polympics API in typescript.",
   "main": "lib/index.js",
   "browser": "dist/polympics.js",
   "types": "lib/polympics/index.d.ts",
   "scripts": {
     "build": "webpack",
-    "build-docs": "typedoc polympics/index.ts --out docs --theme minimal --highlightTheme solarized-light --readme intro.md"
+    "build-docs": "typedoc polympics/index.ts --out docs --theme minimal --highlightTheme solarized-light --readme intro.md --tsconfig tsconfig.web.json"
   },
   "repository": {
     "type": "git",
