@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SearchOptions | polympics</title>
+	<title>NewAward | polympics</title>
 	<meta name="description" content="Documentation for polympics">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">:root {
@@ -2776,8 +2776,22 @@ img {
 		<li class=" tsd-kind-interface">
 			<a href="newaccount.html" class="tsd-kind-icon">New<wbr>Account</a>
 		</li>
-		<li class=" tsd-kind-interface">
+		<li class="current tsd-kind-interface">
 			<a href="newaward.html" class="tsd-kind-icon">New<wbr>Award</a>
+			<ul>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="newaward.html#accounts" class="tsd-kind-icon">accounts</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="newaward.html#imageurl" class="tsd-kind-icon">image<wbr>Url</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="newaward.html#team" class="tsd-kind-icon">team</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-interface">
+					<a href="newaward.html#title" class="tsd-kind-icon">title</a>
+				</li>
+			</ul>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="newteam.html" class="tsd-kind-icon">New<wbr>Team</a>
@@ -2785,13 +2799,8 @@ img {
 		<li class=" tsd-kind-interface">
 			<a href="parametererror.html" class="tsd-kind-icon">Parameter<wbr>Error</a>
 		</li>
-		<li class="current tsd-kind-interface">
+		<li class=" tsd-kind-interface">
 			<a href="searchoptions.html" class="tsd-kind-icon">Search<wbr>Options</a>
-			<ul>
-				<li class=" tsd-kind-property tsd-parent-kind-interface">
-					<a href="searchoptions.html#search" class="tsd-kind-icon">search</a>
-				</li>
-			</ul>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="teamupdate.html" class="tsd-kind-icon">Team<wbr>Update</a>
@@ -2811,12 +2820,7 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">SearchOptions</span>
-					<ul class="tsd-hierarchy">
-						<li>
-							<a href="accountsearchoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">AccountSearchOptions</a>
-						</li>
-					</ul>
+					<span class="target">NewAward</span>
 				</li>
 			</ul>
 		</section>
@@ -2827,7 +2831,10 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="searchoptions.html#search" class="tsd-kind-icon">search</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="newaward.html#accounts" class="tsd-kind-icon">accounts</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="newaward.html#imageurl" class="tsd-kind-icon">image<wbr>Url</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="newaward.html#team" class="tsd-kind-icon">team</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-interface"><a href="newaward.html#title" class="tsd-kind-icon">title</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2836,12 +2843,42 @@ img {
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-				<a name="search" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagOptional">Optional</span> search</h3>
-				<div class="tsd-signature tsd-kind-icon">search<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+				<a name="accounts" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagOptional">Optional</span> accounts</h3>
+				<div class="tsd-signature tsd-kind-icon">accounts<span class="tsd-signature-symbol">:</span> <a href="../classes/account.html" class="tsd-signature-type" data-tsd-kind="Class">Account</a><span class="tsd-signature-symbol">[]</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/polympics/typescript-wrapper/blob/efce6b0/polympics/endpoints.ts#L56">polympics/endpoints.ts:56</a></li>
+						<li>Defined in <a href="https://github.com/polympics/typescript-wrapper/blob/efce6b0/polympics/endpoints.ts#L32">polympics/endpoints.ts:32</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="imageurl" class="tsd-anchor"></a>
+				<h3>image<wbr>Url</h3>
+				<div class="tsd-signature tsd-kind-icon">image<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/polympics/typescript-wrapper/blob/efce6b0/polympics/endpoints.ts#L30">polympics/endpoints.ts:30</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="team" class="tsd-anchor"></a>
+				<h3>team</h3>
+				<div class="tsd-signature tsd-kind-icon">team<span class="tsd-signature-symbol">:</span> <a href="../classes/team.html" class="tsd-signature-type" data-tsd-kind="Class">Team</a></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/polympics/typescript-wrapper/blob/efce6b0/polympics/endpoints.ts#L31">polympics/endpoints.ts:31</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<a name="title" class="tsd-anchor"></a>
+				<h3>title</h3>
+				<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/polympics/typescript-wrapper/blob/efce6b0/polympics/endpoints.ts#L29">polympics/endpoints.ts:29</a></li>
 					</ul>
 				</aside>
 			</section>
