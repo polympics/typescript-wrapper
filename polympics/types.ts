@@ -105,7 +105,7 @@ export class Award {
 /** Award object used by the wrapper with awardees included. */
 export class ExtendedAward extends Award {
     awardees: Array<Account>;
-    team: Team;
+    team: Team | null;
 
     constructor({ award, awardees, team }: RawExtendedAward) {
         super(award);
