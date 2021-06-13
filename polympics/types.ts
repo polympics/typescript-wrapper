@@ -86,6 +86,7 @@ export interface RawAward {
 export interface RawExtendedAward {
     award: RawAward;
     awardees: Array<RawAccount>;
+    team: RawTeam | null;
 }
 
 /** Award object as used by the wrapper. */
@@ -104,10 +105,12 @@ export class Award {
 /** Award object used by the wrapper with awardees included. */
 export class ExtendedAward extends Award {
     awardees: Array<Account>;
+    team: Team;
 
-    constructor({ award, awardees }: RawExtendedAward) {
+    constructor({ award, awardees, team }: RawExtendedAward) {
         super(award);
         this.awardees = awardees.map(raw => new Account(raw));
+        this.team = team ? new Team(team) : null;
     }
 }
 
