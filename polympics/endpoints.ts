@@ -175,6 +175,14 @@ export class UnauthenticatedClient extends BaseClient {
         );
         return new ExtendedAward(data);
     }
+
+    /** Check if signups are open. */
+    async checkSignups(): Promise<boolean> {
+        const data = await this.request<Record<string, boolean>>(
+            'GET', '/accounts/signups'
+        );
+        return data.signups_open;
+    }
 }
 
 /** Wrappers for endpoints that require app *or* user authentication. */
